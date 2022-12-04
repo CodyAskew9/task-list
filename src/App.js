@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -7,16 +7,24 @@ import {
 import './App.css';
 
 function App() {
+
+  const scoreStorage = JSON.parse(localStorage.getItem("highScore" ||" 100"))
  
 const [toDo, setToDO] = useState([
-  {"id":1, "title": "task 1", "status": false},
-  {"id":2, "title": "task 2", "status": false}
+  {"id":1, "title": "set a task", "status": false},
+  {"id":2, "title": "set 5 tasks", "status": false}
 ])
 
 const [newTask, setNewTask] = useState('')
 const [update, setUpdate] = useState('')
 const [score , setScore] =useState(0)
-const [highScore, setHighScore] = useState(100)
+const [highScore, setHighScore] = useState(scoreStorage)
+
+useEffect(()=> {
+  localStorage.setItem("highScore", JSON.stringify(highScore))
+
+},[highScore])
+
 
 // add task
 const addTask = () => {
@@ -88,17 +96,19 @@ const changeTasks = () =>{
       <br />
       <br />
 
+      {update && update ? (
+
       <div className='row'>
         <div className='col'>
           <input value={update && update.title} onChange={ (e) => updateTasks(e)} className='form-control form-control-ig' />
         </div>
         <div className='col-auto'>
           <button onClick={changeTasks} className='btn btn-lg btn-success mr-20'>Update</button>
-          <button className='btn btn-lg btn-warning '>Cancel</button>
+          <button onClick={cancelUpdateTasks} className='btn btn-lg btn-warning '>Cancel</button>
 
         </div>
       </div>
-
+      ) : (
       <div className='row'>
         <div className='col'>
           <input value={newTask} onChange={(e) => setNewTask(e.target.value)} className='form-control form-control-lg'/>
@@ -107,6 +117,10 @@ const changeTasks = () =>{
         <button onClick={addTask} className='btn btn-lg btn-success'>add task</button>
         </div>
       </div>
+        
+      )}
+
+
       
       {toDo && toDo.length ? '' : 'Jobs Done!'}
 
